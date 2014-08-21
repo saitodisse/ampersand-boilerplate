@@ -11,6 +11,16 @@ internals.configStateConfig = {
     ttl: 1000 * 60 * 15,
     isSecure: config.isSecure
 };
+
+// bootstrap fonts (glyphicons)
+server.route({
+  method: 'GET',
+  path: '/fonts/{path*}',
+  handler: {
+      directory: { path: __dirname + '/node_modules/bootstrap/dist/fonts/', listing: false, index: true }
+  }
+});
+
 server.state('config', internals.configStateConfig);
 internals.clientConfig = JSON.stringify(config.client);
 server.ext('onPreResponse', function(request, reply) {
@@ -18,20 +28,25 @@ server.ext('onPreResponse', function(request, reply) {
         var response = request.response;
         return reply(response.state('config', encodeURIComponent(internals.clientConfig)));
     }
-    else {
-        return reply();
-    }
+
+    return reply();
 });
 
 
 // require moonboots_hapi plugin
 server.pack.register({plugin: require('moonboots_hapi'), options: moonbootsConfig}, function (err) {
-    if (err) throw err;
+    if (err){
+        throw err;
+    }
     server.pack.register(fakeApi, function (err) {
-        if (err) throw err;
+        if (err){
+            throw err;
+        }
         // If everything loaded correctly, start the server:
         server.start(function (err) {
-            if (err) throw err;
+            if (err){
+                throw err;
+            }
             console.log("X_Title_X is running at: http://localhost:" + config.http.port + " Yep. That\'s pretty awesome.");
         });
     });

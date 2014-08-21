@@ -29,10 +29,12 @@ module.exports = {
         // order you provide them. So for example, if you're using jQuery make sure
         // you list any plugins after jQuery itself.
         libraries: [
+            __dirname + '/node_modules/jquery/dist/jquery.js',
+            __dirname + '/node_modules/bootstrap/dist/js/bootstrap.js',
         ],
         // Specify the stylesheets we want to bundle
         stylesheets: [
-            cssDir + '/bootstrap.css',
+            __dirname + '/node_modules/bootstrap/dist/css/bootstrap.css',
             cssDir + '/app.css'
         ],
         beforeBuildJS: function () {
