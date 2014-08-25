@@ -1,7 +1,7 @@
 /*global me, app*/
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home-page');
-var CollectionDemo = require('./pages/collection-demo');
+var CollectionDemoPage = require('./pages/collection-demo-page');
 var InfoPage = require('./pages/info-page');
 var PersonAddPage = require('./pages/person-add-page');
 var PersonEditPage = require('./pages/person-edit-page');
@@ -27,7 +27,7 @@ module.exports = Router.extend({
     },
 
     load_collectionDemo: function () {
-        this.trigger('page', new CollectionDemo({
+        this.trigger('page', new CollectionDemoPage({
             model: me,
             collection: app.people
         }));
