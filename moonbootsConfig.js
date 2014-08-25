@@ -23,6 +23,7 @@ module.exports = {
         cssFileName: 'x_title_x',
         main: appDir + '/app.js',
         developmentMode: config.isDev,
+        sourceMaps: config.isDev,
         // Specify any non-commonjs libraries we wish to include.
         // You can think of this as your list of <script> tags in your HTML.
         // These will simply be included before any of your application code in the
