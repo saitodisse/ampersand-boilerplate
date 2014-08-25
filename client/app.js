@@ -5,9 +5,9 @@ var config = require('clientconfig');
 
 var Router = require('./router');
 var tracking = require('./helpers/metrics');
-var MainView = require('./views/main');
-var Me = require('./models/me');
-var People = require('./models/persons');
+var MainView = require('./views/main-view');
+var MeModel = require('./models/me-model');
+var PersonsCollection = require('./models/persons-collection');
 var domReady = require('domready');
 
 
@@ -17,8 +17,8 @@ module.exports = {
         var self = window.app = this;
 
         // create our global 'me' object and an empty collection for our people models.
-        window.me = new Me();
-        this.people = new People();
+        window.me = new MeModel();
+        this.people = new PersonsCollection();
 
         // init our URL handlers and the history tracker
         this.router = new Router();

@@ -1,5 +1,12 @@
 var AmpersandModel = require('ampersand-model');
 
+/*
+
+file:     me-model.js
+class:    MeModel
+instance: meModel
+
+*/
 
 module.exports = AmpersandModel.extend({
     type: 'user',

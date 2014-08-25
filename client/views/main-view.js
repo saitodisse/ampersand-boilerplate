@@ -12,6 +12,13 @@ var templates = require('../templates');
 var tracking = require('../helpers/metrics');
 var setFavicon = require('favicon-setter');
 
+/*
+
+file:     main-view.js
+class:    MainView
+instance: mainView
+
+*/
 
 module.exports = View.extend({
     template: templates.body,

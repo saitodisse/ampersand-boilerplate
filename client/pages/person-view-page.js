@@ -1,10 +1,17 @@
 /*global app, alert*/
-var PageView = require('./base');
+var BasePage = require('./base-page');
 var templates = require('../templates');
-var PersonForm = require('../forms/person');
+var PersonForm = require('../forms/person-form');
 
+/*
 
-module.exports = PageView.extend({
+file:     person-view-page.js
+class:    PersonViewPage
+instance: personViewPage
+
+*/
+
+module.exports = BasePage.extend({
     pageTitle: 'view person',
     template: templates.pages.personView,
     bindings: {

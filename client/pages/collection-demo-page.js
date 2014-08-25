@@ -1,9 +1,16 @@
-var PageView = require('./base');
+var BasePage = require('./base-page');
 var templates = require('../templates');
 var PersonView = require('../views/person');
 
+/*
 
-module.exports = PageView.extend({
+file:     collection-demo-page.js
+class:    CollectionDemoPage
+instance: collectionDemoPage
+
+*/
+
+module.exports = BasePage.extend({
     pageTitle: 'collection demo',
     template: templates.pages.collectionDemo,
     events: {

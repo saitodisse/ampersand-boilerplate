@@ -1,5 +1,12 @@
 var AmpersandModel = require('ampersand-model');
 
+/*
+
+file:     person-model.js
+class:    PersonModel
+instance: personModel
+
+*/
 
 module.exports = AmpersandModel.extend({
     props: {

@@ -5,6 +5,16 @@ var ExtendedInput = InputView.extend({
     template: templates.includes.formInput()
 });
 
+/*
+
+file:       person-form.js
+class:      PersonForm
+instance:   personForm
+
+view:
+
+*/
+
 module.exports = FormView.extend({
     fields: function () {
         return [

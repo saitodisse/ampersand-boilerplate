@@ -1,55 +1,55 @@
 /*global me, app*/
 var Router = require('ampersand-router');
-var HomePage = require('./pages/home');
+var HomePage = require('./pages/home-page');
 var CollectionDemo = require('./pages/collection-demo');
-var InfoPage = require('./pages/info');
-var PersonAddPage = require('./pages/person-add');
-var PersonEditPage = require('./pages/person-edit');
-var PersonViewPage = require('./pages/person-view');
+var InfoPage = require('./pages/info-page');
+var PersonAddPage = require('./pages/person-add-page');
+var PersonEditPage = require('./pages/person-edit-page');
+var PersonViewPage = require('./pages/person-view-page');
 
 
 module.exports = Router.extend({
     routes: {
-        '': 'home',
-        'collections': 'collectionDemo',
-        'info': 'info',
-        'person/add': 'personAdd',
-        'person/:id': 'personView',
-        'person/:id/edit': 'personEdit',
-        '(*path)': 'catchAll'
+        ''               : 'load_home',
+        'collections'    : 'load_collectionDemo',
+        'info'           : 'load_info',
+        'person/add'     : 'load_personAdd',
+        'person/:id'     : 'load_personView',
+        'person/:id/edit': 'load_personEdit',
+        '(*path)'        : 'catchAll'
     },
 
     // ------- ROUTE HANDLERS ---------
-    home: function () {
+    load_home: function () {
         this.trigger('page', new HomePage({
             model: me
         }));
     },
 
-    collectionDemo: function () {
+    load_collectionDemo: function () {
         this.trigger('page', new CollectionDemo({
             model: me,
             collection: app.people
         }));
     },
 
-    info: function () {
+    load_info: function () {
         this.trigger('page', new InfoPage({
             model: me
         }));
     },
 
-    personAdd: function () {
+    load_personAdd: function () {
         this.trigger('page', new PersonAddPage());
     },
 
-    personEdit: function (id) {
+    load_personEdit: function (id) {
         this.trigger('page', new PersonEditPage({
             id: id
         }));
     },
 
-    personView: function (id) {
+    load_personView: function (id) {
         this.trigger('page', new PersonViewPage({
             id: id
         }));

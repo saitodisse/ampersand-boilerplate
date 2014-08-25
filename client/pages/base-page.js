@@ -4,6 +4,13 @@ var View = require('ampersand-view');
 var _ = require('underscore');
 //var key = require('keymaster');
 
+/*
+
+file:     base-page.js
+class:    BasePage
+instance: basePage
+
+*/
 
 module.exports = View.extend({
     // register keyboard handlers

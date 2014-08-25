@@ -1,6 +1,13 @@
 var View = require('ampersand-view');
 var templates = require('../templates');
 
+/*
+
+file:     person-view.js
+class:    PersonView
+instance: personView
+
+*/
 
 module.exports = View.extend({
     template: templates.includes.person,
