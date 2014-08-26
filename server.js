@@ -17,11 +17,16 @@ var app = express();
 var fixPath = function (pathString) {
     return path.resolve(path.normalize(pathString));
 };
+
 // -----------------
 // Configure express
 // -----------------
 app.use(compress());
 app.use(serveStatic(fixPath('public')));
+
+//bootstrap fonts
+app.use(serveStatic('/fonts', fixPath('node_modules/bootstrap/dist/fonts')));
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -44,17 +49,6 @@ app.get('/api/people/:id', api.get);
 app.delete('/api/people/:id', api.delete);
 app.put('/api/people/:id', api.update);
 app.post('/api/people', api.add);
-
-// -----------------
-// Enable the functional test site in development
-// -----------------
-if (config.isDev) {
-    app.get('/test*', semiStatic({
-        folderPath: fixPath('test'),
-        root: '/test'
-    }));
-}
-
 
 // -----------------
 // Set our client config cookie

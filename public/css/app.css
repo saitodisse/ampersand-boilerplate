@@ -1,3 +1,37 @@
 body {
   background: #fff;
 }
+.bs-glyphicons {
+  margin: 0 -10px 20px;
+  overflow: hidden;
+}
+.bs-glyphicons .bs-glyphicons-list {
+  padding-left: 0;
+  list-style: none;
+}
+.bs-glyphicons li {
+  background-color: #563d7c;
+  font-size: 18px;
+  float: left;
+  height: 115px;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  background-color: #f9f9f9;
+  border: 1px solid #fff;
+}
+.bs-glyphicons .glyphicon {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 32px;
+}
+.bs-glyphicons .glyphicon-class {
+  display: block;
+  text-align: center;
+  word-wrap: break-word;
+}
+.bs-glyphicons li:hover {
+  color: #fff;
+  background-color: #563d7c;
+}

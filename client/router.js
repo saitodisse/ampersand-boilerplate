@@ -6,6 +6,7 @@ var InfoPage = require('./pages/info-page');
 var PersonAddPage = require('./pages/person-add-page');
 var PersonEditPage = require('./pages/person-edit-page');
 var PersonViewPage = require('./pages/person-view-page');
+var BootstrapExamplesPage = require('./pages/bootstrap-examples-page');
 
 
 module.exports = Router.extend({
@@ -16,6 +17,7 @@ module.exports = Router.extend({
         'person/add'     : 'load_personAdd',
         'person/:id'     : 'load_personView',
         'person/:id/edit': 'load_personEdit',
+        'bootstrap-examples': 'load_bootstrapExamples',
         '(*path)'        : 'catchAll'
     },
 
@@ -37,6 +39,10 @@ module.exports = Router.extend({
         this.trigger('page', new InfoPage({
             model: me
         }));
+    },
+
+    load_bootstrapExamples: function () {
+        this.trigger('page', new BootstrapExamplesPage());
     },
 
     load_personAdd: function () {
