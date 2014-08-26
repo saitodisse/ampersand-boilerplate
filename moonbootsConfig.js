@@ -1,69 +1,58 @@
 var config = require('getconfig');
 var stylizer = require('stylizer');
 var templatizer = require('templatizer');
+var path = require('path');
+var Moonboots = require('moonboots-express');
 
 // for reuse
 var appDir = __dirname + '/client';
 var cssDir = __dirname + '/public/css';
 
 
-module.exports = {
-    // Tell the Hapi server what URLs the application should be served from.
-    // Since we're doing clientside routing we want to serve this from some type
-    // of wildcard url.
-    // examples:
-    //     '/{p*}' - match everything that isn't matched by something more specific
-    //     '/dashboard/{p*}' - serve the app at all routes starting with '/dashbaord'
-    appPath: '/{p*}',
-    // The moonboots config
-    moonboots: {
-        // The base name of the javascript file served in the <script src="the_name.*.js">
-        jsFileName: 'x_title_x',
-        // The base name of the javascript file served in the <link rel="stylesheet" src="the_name.*.js">
-        cssFileName: 'x_title_x',
-        main: appDir + '/app.js',
-        developmentMode: config.isDev,
-        sourceMaps: config.isDev,
-        // Specify any non-commonjs libraries we wish to include.
-        // You can think of this as your list of <script> tags in your HTML.
-        // These will simply be included before any of your application code in the
-        // order you provide them. So for example, if you're using jQuery make sure
-        // you list any plugins after jQuery itself.
-        libraries: [
-        ],
-        // Specify the stylesheets we want to bundle
-        stylesheets: [
-            cssDir + '/bootstrap.css',
-            cssDir + '/app.css'
-        ],
-        beforeBuildJS: function () {
-            // This re-builds our template files from jade each time the app's main
-            // js file is requested. Which means you can seamlessly change jade and
-            // refresh in your browser to get new templates.
-            if (config.isDev) {
-                templatizer(__dirname + '/templates', appDir + '/templates.js');
+// a little helper for fixing paths for various environments
+var fixPath = function (pathString) {
+    return path.resolve(path.normalize(pathString));
+};
+
+module.exports = function(app) {
+    new Moonboots({
+        moonboots: {
+            jsFileName: 'x_title_x',
+            cssFileName: 'x_title_x',
+            main: fixPath('client/app.js'),
+            developmentMode: config.isDev,
+            libraries: [
+            ],
+            stylesheets: [
+                fixPath('public/css/bootstrap.css'),
+                fixPath('public/css/app.css')
+            ],
+            browserify: {
+                debug: false
+            },
+            beforeBuildJS: function () {
+                // This re-builds our template files from jade each time the app's main
+                // js file is requested. Which means you can seamlessly change jade and
+                // refresh in your browser to get new templates.
+                if (config.isDev) {
+                    templatizer(fixPath('templates'), fixPath('client/templates.js'));
+                }
+            },
+            beforeBuildCSS: function (done) {
+                // This re-builds css from stylus each time the app's main
+                // css file is requested. Which means you can seamlessly change stylus files
+                // and see new styles on refresh.
+                if (config.isDev) {
+                    stylizer({
+                        infile: fixPath('public/css/app.styl'),
+                        outfile: fixPath('public/css/app.css'),
+                        development: true
+                    }, done);
+                } else {
+                    done();
+                }
             }
         },
-        beforeBuildCSS: function (done) {
-            // We only want to do this in dev mode. If it's not in dev mode, this
-            // function will only be run once.
-            if (!config.isDev) {
-                done();
-                return;
-            }
-            // Re-compile stylus to css each time the app's main css file is requested.
-            // In addition there's a "watch" option that will make stylizer also be able
-            // to talk to livereaload (http://livereload.com/) browser plugins for sneakily
-            // refreshing styles without waiting for you to refresh or running/configuring
-            // the live reload app.
-            stylizer({
-                infile: cssDir + '/app.styl',
-                outfile: cssDir + '/app.css',
-                development: true,
-                // Beware there's an issue with watch on OSX that causes issues with
-                // watch if you're not running node 0.10.25 or later.
-                watch: cssDir + '/**/*.styl'
-            }, done);
-        }
-    }
+        server: app
+    });
 };

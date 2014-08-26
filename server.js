@@ -1,38 +1,76 @@
-var Hapi = require('hapi');
+/* global console */
+var path = require('path');
+var express = require('express');
+var helmet = require('helmet');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var compress = require('compression');
 var config = require('getconfig');
-var server = new Hapi.Server('localhost', config.http.port);
+var semiStatic = require('semi-static');
+var serveStatic = require('serve-static');
+var stylizer = require('stylizer');
+var templatizer = require('templatizer');
 var moonbootsConfig = require('./moonbootsConfig');
-var fakeApi = require('./fakeApi');
-var internals = {};
+var app = express();
 
-// set clientconfig cookie
-internals.configStateConfig = {
-    encoding: 'none',
-    ttl: 1000 * 60 * 15,
-    isSecure: config.isSecure
+// a little helper for fixing paths for various environments
+var fixPath = function (pathString) {
+    return path.resolve(path.normalize(pathString));
 };
-server.state('config', internals.configStateConfig);
-internals.clientConfig = JSON.stringify(config.client);
-server.ext('onPreResponse', function(request, reply) {
-    if (!request.state.config) {
-        var response = request.response;
-        return reply(response.state('config', encodeURIComponent(internals.clientConfig)));
-    }
-    else {
-        return reply();
-    }
+// -----------------
+// Configure express
+// -----------------
+app.use(compress());
+app.use(serveStatic(fixPath('public')));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+// in order to test this with spacemonkey we need frames
+if (!config.isDev) {
+    app.use(helmet.xframe());
+}
+app.use(helmet.xssFilter());
+app.use(helmet.nosniff());
+
+app.set('view engine', 'jade');
+
+// -----------------
+// Set up our little demo API
+// -----------------
+var api = require('./fakeApi');
+app.get('/api/people', api.list);
+app.get('/api/people/:id', api.get);
+app.delete('/api/people/:id', api.delete);
+app.put('/api/people/:id', api.update);
+app.post('/api/people', api.add);
+
+// -----------------
+// Enable the functional test site in development
+// -----------------
+if (config.isDev) {
+    app.get('/test*', semiStatic({
+        folderPath: fixPath('test'),
+        root: '/test'
+    }));
+}
+
+
+// -----------------
+// Set our client config cookie
+// -----------------
+app.use(function (req, res, next) {
+    res.cookie('config', JSON.stringify(config.client));
+    next();
 });
 
 
-// require moonboots_hapi plugin
-server.pack.register({plugin: require('moonboots_hapi'), options: moonbootsConfig}, function (err) {
-    if (err) throw err;
-    server.pack.register(fakeApi, function (err) {
-        if (err) throw err;
-        // If everything loaded correctly, start the server:
-        server.start(function (err) {
-            if (err) throw err;
-            console.log("X_Title_X is running at: http://localhost:" + config.http.port + " Yep. That\'s pretty awesome.");
-        });
-    });
-});
+// ---------------------------------------------------
+// Configure Moonboots to serve our client application
+// ---------------------------------------------------
+moonbootsConfig(app);
+
+
+// listen for incoming http requests on the port as specified in our config
+app.listen(config.http.port);
+console.log("X_Title_X is running at: http://localhost:" + config.http.port + " Yep. That\'s pretty awesome.");
