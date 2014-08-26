@@ -22,10 +22,13 @@ module.exports = function(app) {
             main: fixPath('client/app.js'),
             developmentMode: config.isDev,
             libraries: [
+            __dirname + '/node_modules/jquery/dist/jquery.js',
+            __dirname + '/node_modules/bootstrap/dist/js/bootstrap.js',
             ],
+            // Specify the stylesheets we want to bundle
             stylesheets: [
-                fixPath('public/css/bootstrap.css'),
-                fixPath('public/css/app.css')
+                __dirname + '/node_modules/bootstrap/dist/css/bootstrap.css',
+                cssDir + '/app.css'
             ],
             browserify: {
                 debug: false

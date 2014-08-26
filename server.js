@@ -24,9 +24,6 @@ var fixPath = function (pathString) {
 app.use(compress());
 app.use(serveStatic(fixPath('public')));
 
-//bootstrap fonts
-app.use(serveStatic('/fonts', fixPath('node_modules/bootstrap/dist/fonts')));
-
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -62,7 +59,13 @@ app.use(function (req, res, next) {
 // ---------------------------------------------------
 // Configure Moonboots to serve our client application
 // ---------------------------------------------------
+
+//Bootstrap fonts
+app.all(/^\/fonts$/, function(req, res) { res.redirect('/fonts/'); });
+app.use('/fonts/',serveStatic(__dirname + '/node_modules/bootstrap/dist/fonts'));
+
 moonbootsConfig(app);
+
 
 
 // listen for incoming http requests on the port as specified in our config
