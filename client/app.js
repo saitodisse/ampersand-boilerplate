@@ -10,11 +10,16 @@ var MeModel = require('./models/me-model');
 var PersonsCollection = require('./models/persons-collection');
 var domReady = require('domready');
 
+var Tracer = require('./mogger-logger/mogger-start');
 
 module.exports = {
     // this is the the whole app initter
     blastoff: function () {
         var self = window.app = this;
+
+        // Mogger
+        this.tracer = new Tracer();
+        this.tracer.startTracing();
 
         // create our global 'me' object and an empty collection for our people models.
         window.me = new MeModel();
