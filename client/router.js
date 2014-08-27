@@ -2,7 +2,7 @@
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home-page');
 var CollectionDemoPage = require('./pages/collection-demo-page');
-var InfoPage = require('./pages/info-page');
+var LoginPage = require('./pages/login-page');
 var PersonAddPage = require('./pages/person-add-page');
 var PersonEditPage = require('./pages/person-edit-page');
 var PersonViewPage = require('./pages/person-view-page');
@@ -11,14 +11,14 @@ var BootstrapExamplesPage = require('./pages/bootstrap-examples-page');
 
 module.exports = Router.extend({
     routes: {
-        ''               : 'load_home',
-        'collections'    : 'load_collectionDemo',
-        'info'           : 'load_info',
-        'person/add'     : 'load_personAdd',
-        'person/:id'     : 'load_personView',
-        'person/:id/edit': 'load_personEdit',
+        ''                  : 'load_home',
+        'collections'       : 'load_collectionDemo',
+        'login'             : 'load_login',
+        'person/add'        : 'load_personAdd',
+        'person/:id'        : 'load_personView',
+        'person/:id/edit'   : 'load_personEdit',
         'bootstrap-examples': 'load_bootstrapExamples',
-        '(*path)'        : 'catchAll'
+        '(*path)'           : 'catchAll'
     },
 
     // ------- ROUTE HANDLERS ---------
@@ -35,8 +35,8 @@ module.exports = Router.extend({
         }));
     },
 
-    load_info: function () {
-        this.trigger('page', new InfoPage({
+    load_login: function () {
+        this.trigger('page', new LoginPage({
             model: me
         }));
     },

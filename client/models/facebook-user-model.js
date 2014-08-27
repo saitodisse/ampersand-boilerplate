@@ -1,0 +1,135 @@
+/* global FB*/
+/*
+ * facebook-user.js V. 1.1.0, Created 2012 by Christian Bäuerlein
+ */
+var AmpersandModel = require('ampersand-model');
+var _ = require('underscore');
+
+/*
+
+file:     facebook-user-model.js
+class:    FacebookUserModel
+instance: facebookUserModel
+
+*/
+
+module.exports = AmpersandModel.extend({
+    type: 'user',
+    props: {
+        scope: ['array'],
+        autoFetch: ['boolean', false, true],
+        protocol: ['string', false, '']
+    },
+    derived: {
+        fullName: {
+            deps: ['firstName', 'lastName'],
+            cache: true,
+            fn: function () {
+                return this.firstName + ' ' + this.lastName;
+            }
+        },
+        initials: {
+            deps: ['firstName', 'lastName'],
+            cache: true,
+            fn: function () {
+                return (this.firstName.charAt(0) + this.lastName.charAt(0)).toUpperCase();
+            }
+        }
+    },
+
+    initialize: function(attributes, options) {
+        options || (options = {});
+        this.options = _.defaults(options, this.defaultOptions);
+
+        FB.Event.subscribe('auth.authResponseChange', this.onLoginStatusChange.bind(this));
+    },
+
+    options: null,
+
+    _loginStatus: null,
+
+    isConnected: function() {
+        return this._loginStatus === 'connected';
+    },
+
+    login: function(callback){
+        if (typeof callback === 'undefined') {
+        callback = function() {};
+        }
+        FB.login(callback, { scope: this.options.scope.join(',') });
+    },
+
+    logout: function(){
+        FB.logout();
+    },
+
+    updateLoginStatus: function(){
+        FB.getLoginStatus(this.onLoginStatusChange);
+    },
+
+    onLoginStatusChange: function(response) {
+        if(this._loginStatus === response.status) return false;
+
+        var event;
+
+        if(response.status === 'not_authorized') {
+        event = 'facebook:unauthorized';
+        } else if (response.status === 'connected') {
+        event = 'facebook:connected';
+        if(this.options.autoFetch === true) this.fetch();
+        } else {
+        event = 'facebook:disconnected';
+        }
+
+        this._loginStatus = response.status;
+        this.trigger(event, this, response);
+    },
+
+    parse: function(response) {
+        var attributes = _.extend(response, {
+        pictures: this.profilePictureUrls(response.id)
+        });
+
+        return attributes;
+    },
+
+    sync: function(method, model, options) {
+        if(method !== 'read') throw new Error('FacebookUser is a readonly model, cannot perform ' + method);
+
+        var callback = function(response) {
+        if(response.error) {
+            options.error(response);
+        } else {
+            options.success(response);
+        }
+        return true;
+        };
+
+        var request = FB.api('/me', callback);
+        model.trigger('request', model, request, options);
+        return request;
+    },
+
+    profilePictureUrls: function(id) {
+        id || (id = this.id);
+        var urls = {};
+        _([ 'square', 'small', 'normal', 'large' ]).each(function(size){
+        urls[size] = this.profilePictureUrl(id, size);
+        }, this);
+
+        return urls;
+    },
+
+    profilePictureUrl: function(id, size) {
+        return [
+        this.options.protocol,
+        '//graph.facebook.com/',
+        id,
+        '/picture?type=',
+        size,
+        this.options.protocol.indexOf('https') > -1 ? '&return_ssl_resources=1' : ''
+        ].join('');
+    }
+
+
+});
