@@ -18,7 +18,7 @@ module.exports = BasePage.extend({
         console.info('FB jssdk loaded');
 
         FB.init({
-            appId: '118463588262594'
+            appId: '282574611931207'
         });
 
         var facebook_user = new FacebookUserModel();
