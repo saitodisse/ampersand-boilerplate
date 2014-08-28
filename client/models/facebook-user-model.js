@@ -1,11 +1,9 @@
 'use strict';
 
 /*
- * facebook-user.js V. 1.1.0, Created 2012 by Christian Bäuerlein
+ * based on: facebook-user.js V. 1.1.0, Created 2012 by Christian Bäuerlein
  */
 var AmpersandModel = require('ampersand-model');
-var _ = require('underscore');
-
 /*
 
 file:     facebook-user-model.js
@@ -23,7 +21,9 @@ module.exports = AmpersandModel.extend({
         connected: ['boolean'],
         disconnected: ['boolean'],
         loginStatus: ['string'],
-        protocol: ['string', false, '']
+        protocol: ['string', true, window.document.location.protocol],
+        response: ['object'],
+        profile_picture_type: ['string'] //'square', 'small', 'normal', 'large'
     },
     derived: {
         isConnected:{
@@ -33,6 +33,15 @@ module.exports = AmpersandModel.extend({
             fn: function () {
                 // the distance formula
                 return this.loginStatus === 'connected';
+            }
+        },
+        pictureUrl:{
+            // the properties it depends on
+            deps: ['connected', 'profile_picture_type'],
+            // how it's calculated
+            fn: function () {
+                // the distance formula
+                return this.profilePictureUrl();
             }
         }
     },
@@ -48,7 +57,7 @@ module.exports = AmpersandModel.extend({
         if (typeof callback === 'undefined') {
             callback = function() {};
         }
-        this.scope = ['email'];
+
         window.FB.login(callback, { scope: this.scope.join(',') });
     },
 
@@ -61,34 +70,19 @@ module.exports = AmpersandModel.extend({
     },
 
     onLoginStatusChange: function(response) {
-        // if(this.loginStatus === response.status){
-        //     return false;
-        // }
-        //
-        // var event_name = '';
-
-        if(response.status === 'not_authorized') {
-            this.unauthorized = true;
-        }
-        else if (response.status === 'connected') {
-            this.connected = true;
-            if(this.autoFetch === true){
-                this.fetch();
-            }
-        }
-        else {
-            this.disconnected = true;
-        }
-
+        this.response = response;
         this.loginStatus = response.status;
-    },
+        this.unauthorized = (this.loginStatus === 'not_authorized');
+        this.connected = (this.loginStatus === 'connected');
+        this.disconnected = (this.loginStatus === 'unknown');
 
-    parse: function(response) {
-        var attributes = _.extend(response, {
-        pictures: this.profilePictureUrls(response.id)
-        });
+        if(this.connected && this.autoFetch){
+            this.fetch();
+        }
 
-        return attributes;
+        // set defaults
+        this.scope = ['email'];
+        this.profile_picture_type = 'normal';
     },
 
     sync: function(method, model, options) {
@@ -110,27 +104,14 @@ module.exports = AmpersandModel.extend({
         return request;
     },
 
-    profilePictureUrls: function(id) {
-        if(!id){
-            id = this.id;
-        }
-
-        var urls = {};
-        _([ 'square', 'small', 'normal', 'large' ]).each(function(size){
-        urls[size] = this.profilePictureUrl(id, size);
-        }, this);
-
-        return urls;
-    },
-
-    profilePictureUrl: function(id, size) {
+    profilePictureUrl: function() {
         return [
-        this.protocol,
-        '//graph.facebook.com/',
-        id,
-        '/picture?type=',
-        size,
-        this.protocol.indexOf('https') > -1 ? '&return_ssl_resources=1' : ''
+            this.protocol,
+            '//graph.facebook.com/',
+            app.facebook_user.response.authResponse.userID,
+            '/picture?type=',
+            this.profile_picture_type,
+            this.protocol.indexOf('https') > -1 ? '&return_ssl_resources=1' : ''
         ].join('');
     }
 

@@ -55,47 +55,53 @@ module.exports = BasePage.extend({
             appId: '282574611931207'
         });
 
+        this.initializeHtmlElements();
+
+
         // FacebookUserModel
         this.facebook_user = new FacebookUserModel();
         window.app.facebook_user = this.facebook_user;
 
-        this.facebook_user.on('change:unauthorized', function(model, response) {
-            console.info('change:unauthorized', model, response);
-            // $('#loginstatus').text(response.status);
-        });
+        this.facebook_user.on('change:unauthorized', function(model) {
+            console.info('change:unauthorized');
+            this.jStatus.text(model.loginStatus);
+        }, this);
 
-        this.facebook_user.on('change:connected', function(model, response) {
-            console.info('change:connected', model, response);
-            // $('#loginstatus').text(response.status);
-            var jBtnLogin = this.getByRole('login');
-            console.info(jBtnLogin);
-            //jBtnLogin.attr('disabled', true);
-            // $('#login').attr('disabled', true);
-            // $('#logout').attr('disabled', false);
-        });
+        this.facebook_user.on('change:connected', function(model) {
+            console.info('change:connected');
+            this.jStatus.text(model.loginStatus);
+            this.jBtnLogin = $(this.getByRole('login'));
+            this.jBtnLogin.attr('disabled', true);
+            this.jBtnLogout.attr('disabled', false);
+        }, this);
 
-        this.facebook_user.on('change:disconnected', function(model, response) {
-            console.info('change:disconnected', model, response);
-            // $('#loginstatus').text(response.status);
-            // $('#login').attr('disabled', false);
-            // $('#logout').attr('disabled', true)
-        });
+        this.facebook_user.on('change:disconnected', function(model, value) {
+            if(value){
+                console.info('change:disconnected');
+                this.jStatus.text(model.loginStatus);
+                this.jBtnLogin.attr('disabled', false);
+                this.jBtnLogout.attr('disabled', true);
+            }
+        }, this);
 
-        // this.facebook_user.on('change', function() {
-        //     console.info('change', arguments);
-        //     // var table = $('.table tbody').empty();
-        //     // _(this.facebook_user.attributes).each(function(value, attribute){
-        //     //   if (typeof value !== 'string') return;
-        //     //   var tr = $(document.createElement('tr'));
-        //     //   var attr = $(document.createElement('td')).text(attribute).appendTo(tr);
-        //     //   var val = $(document.createElement('td')).text(value).appendTo(tr);
-        //     //   tr.append(attr).append(val).appendTo(table);
-        //     // }, this);
-
-        //     // $('#this.facebook_user_picture').show().attr('src', this.facebook_user.get('pictures').square);
-        // });
-
+        this.facebook_user.on('change', this.showDetails, this);
         this.facebook_user.updateLoginStatus();
     },
+
+    initializeHtmlElements: function() {
+        this.jBtnLogin = $(this.getByRole('login'));
+        this.jBtnLogout = $(this.getByRole('logout'));
+        this.jStatus = $(this.getByRole('status'));
+        this.jPreDetails = $(this.getByRole('details'));
+        this.jPicture = $(this.getByRole('facebook_user_picture'));
+    },
+
+    showDetails: function() {
+        console.info('change');
+        var authResponse = app.facebook_user.response.authResponse;
+        var authResponse_stringified = JSON.stringify(authResponse, '  ', 2);
+        this.jPreDetails.html(authResponse_stringified);
+        this.jPicture.attr('src', this.facebook_user.pictureUrl);
+    }
 
 });
