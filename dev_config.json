@@ -1,9 +1,8 @@
+// Can have comments here, because is parsed with ALCE
+// https://github.com/walmartlabs/ALCE
 {
     "isDev": true,
     "isSecure": false,
-    "facebook": {
-        "app_id": "283179825204019"
-    },
     "session": {
         "host": "localhost",
         "port": 6379,
@@ -17,6 +16,11 @@
     },
     "client": {
         "apiUrl": "http://localhost:3000",
-        "debugMode": true
+        "debugMode": true,
+        "facebook": {
+            // login-localhost -> https://developers.facebook.com/apps/283179825204019/settings/
+            "app_id": "283179825204019",
+            // login-test -> https://developers.facebook.com/apps/282574611931207/settings/
+        }
     }
 }

@@ -16,13 +16,14 @@ module.exports = AmpersandModel.extend({
     type: 'user',
     props: {
         scope: ['array'],
-        autoFetch: ['boolean', false, true],
+        autoFetch: ['boolean', true, true],
         unauthorized: ['boolean'],
         connected: ['boolean'],
         disconnected: ['boolean'],
         loginStatus: ['string'],
         protocol: ['string', true, window.document.location.protocol],
         response: ['object'],
+        details: ['object'],
         profile_picture_type: ['string', true, 'normal'] //'square', 'small', 'normal', 'large'
     },
     derived: {
@@ -80,25 +81,27 @@ module.exports = AmpersandModel.extend({
         if(this.connected && this.autoFetch){
             this.fetch();
         }
+
+        if(!this.isConnected){
+            this.details = {};
+        }
     },
 
-    sync: function(method, model, options) {
+    sync: function(method) {
         if(method !== 'read'){
             throw new Error('FacebookUser is a readonly model, cannot perform ' + method);
         }
 
         var callback = function(response) {
-        if(response.error) {
-            options.error(response);
-        } else {
-            options.success(response);
-        }
-        return true;
+            if(response.error) {
+                throw response;
+            } else {
+                this.details = response;
+            }
+            return true;
         };
 
-        var request = window.FB.api('/me', callback);
-        model.trigger('request', model, request, options);
-        return request;
+        window.FB.api('/me', callback.bind(this));
     },
 
     profilePictureUrl: function() {

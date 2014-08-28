@@ -2,7 +2,7 @@
 var BasePage = require('./base-page');
 var templates = require('../templates');
 var FacebookUserModel = require('../models/facebook-user-model');
-var config = require('getconfig');
+var config = require('clientconfig');
 /*
 
 file:     login-page.js
@@ -52,9 +52,6 @@ module.exports = BasePage.extend({
     },
 
     local_fbAsyncInit: function() {
-        console.log(config);
-
-
         FB.init({
             appId: config.facebook.app_id
         });
@@ -71,12 +68,17 @@ module.exports = BasePage.extend({
             this.jStatus.text(model.loginStatus);
         }, this);
 
-        this.facebook_user.on('change:connected', function(model) {
-            console.info('change:connected');
-            this.jStatus.text(model.loginStatus);
-            this.jBtnLogin = $(this.getByRole('login'));
-            this.jBtnLogin.attr('disabled', true);
-            this.jBtnLogout.attr('disabled', false);
+        this.facebook_user.on('change:connected', function(model, value) {
+            if(value){
+                console.info('change:connected');
+                this.jStatus.text(model.loginStatus);
+                this.jBtnLogin = $(this.getByRole('login'));
+                this.jBtnLogin.attr('disabled', true);
+                this.jBtnLogout.attr('disabled', false);
+
+                this.showDetails();
+            }
+
         }, this);
 
         this.facebook_user.on('change:disconnected', function(model, value) {
@@ -85,10 +87,12 @@ module.exports = BasePage.extend({
                 this.jStatus.text(model.loginStatus);
                 this.jBtnLogin.attr('disabled', false);
                 this.jBtnLogout.attr('disabled', true);
+
+                this.clearDetails();
             }
         }, this);
 
-        this.facebook_user.on('change:isConnected', this.showDetails, this);
+        this.facebook_user.on('change:details', this.showDetails, this);
         this.facebook_user.updateLoginStatus();
     },
 
@@ -101,17 +105,15 @@ module.exports = BasePage.extend({
     },
 
     showDetails: function() {
-        console.info('change');
-        if(this.facebook_user.isConnected){
-            var authResponse = app.facebook_user.response.authResponse;
-            var authResponse_stringified = JSON.stringify(authResponse, '  ', 2);
-            this.jPreDetails.html(authResponse_stringified);
-            this.jPicture.attr('src', this.facebook_user.pictureUrl).show();
-        }
-        else{
-            this.jPreDetails.html('');
-            this.jPicture.attr('src', '').hide();
-        }
+        var authResponse = app.facebook_user.details;
+        var authResponse_stringified = JSON.stringify(authResponse, '  ', 2);
+        this.jPreDetails.html(authResponse_stringified);
+        this.jPicture.attr('src', this.facebook_user.pictureUrl).show();
+    },
+
+    clearDetails: function() {
+        this.jPreDetails.html('');
+        this.jPicture.attr('src', '').hide();
     }
 
 });
