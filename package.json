@@ -36,17 +36,5 @@
     "templatizer": "^0.3.5",
     "underscore": "^1.6.0"
   },
-  "devDependencies": {},
-  "jshintConfig": {
-    "asi": false,
-    "browser": true,
-    "curly": false,
-    "expr": true,
-    "indent": 4,
-    "loopfunc": true,
-    "node": true,
-    "trailing": true,
-    "undef": true,
-    "white": true
-  }
+  "devDependencies": {}
 }

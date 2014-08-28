@@ -1,3 +1,5 @@
+'use strict';
+
 var View = require('ampersand-view');
 var templates = require('../templates');
 

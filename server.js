@@ -1,18 +1,19 @@
 /* global console */
-var path = require('path');
-var express = require('express');
-var helmet = require('helmet');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var compress = require('compression');
-var config = require('getconfig');
-var semiStatic = require('semi-static');
-var serveStatic = require('serve-static');
-var stylizer = require('stylizer');
-var templatizer = require('templatizer');
+var path            = require('path');
+var express         = require('express');
+var helmet          = require('helmet');
+var bodyParser      = require('body-parser');
+var cookieParser    = require('cookie-parser');
+var compress        = require('compression');
+var config          = require('getconfig');
+var semiStatic      = require('semi-static');
+var serveStatic     = require('serve-static');
+var stylizer        = require('stylizer');
+var templatizer     = require('templatizer');
+var morgan          = require('morgan');
 var moonbootsConfig = require('./moonbootsConfig');
-var app = express();
 
+var app = express();
 var PORT = process.env.PORT || config.http.port;
 
 // a little helper for fixing paths for various environments
@@ -26,6 +27,7 @@ var fixPath = function (pathString) {
 app.use(compress());
 app.use(serveStatic(fixPath('public')));
 
+app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

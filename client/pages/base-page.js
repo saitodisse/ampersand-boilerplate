@@ -1,7 +1,7 @@
-/*global $*/
+'use strict';
+
 // base view for pages
 var View = require('ampersand-view');
-var _ = require('underscore');
 //var key = require('keymaster');
 
 /*

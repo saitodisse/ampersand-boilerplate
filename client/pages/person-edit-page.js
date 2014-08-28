@@ -1,4 +1,5 @@
-/*global app, alert*/
+'use strict';
+
 var BasePage = require('./base-page');
 var templates = require('../templates');
 var PersonForm = require('../forms/person-form');
@@ -17,7 +18,9 @@ module.exports = BasePage.extend({
     initialize: function (spec) {
         var self = this;
         app.people.getOrFetch(spec.id, {all: true}, function (err, model) {
-            if (err) alert('couldnt find a model with id: ' + spec.id);
+            if (err){
+                alert('couldnt find a model with id: ' + spec.id);
+            }
             self.model = model;
         });
     },

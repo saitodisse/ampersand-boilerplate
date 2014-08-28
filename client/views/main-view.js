@@ -1,4 +1,5 @@
-/*global app, me, $*/
+'use strict';
+
 // This app view is responsible for rendering all content that goes into
 // <html>. It's initted right away and renders itself on DOM ready.
 
@@ -9,7 +10,7 @@ var _ = require('underscore');
 var domify = require('domify');
 var dom = require('ampersand-dom');
 var templates = require('../templates');
-var tracking = require('../helpers/metrics');
+// var tracking = require('../helpers/metrics');
 var setFavicon = require('favicon-setter');
 
 /*
@@ -38,9 +39,9 @@ module.exports = View.extend({
 
         // init and configure our page switcher
         this.pageSwitcher = new ViewSwitcher(this.getByRole('page-container'), {
-            show: function (newView, oldView) {
+            show: function (newView/*, oldView*/) {
                 // it's inserted and rendered for me
-                document.title = _.result(newView, 'pageTitle') || "X_Title_X";
+                document.title = _.result(newView, 'pageTitle');
                 document.scrollTop = 0;
 
                 // add a class specifying it's active

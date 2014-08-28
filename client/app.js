@@ -1,10 +1,11 @@
-/*global app, me, $*/
-var _ = require('underscore');
-var logger = require('andlog');
-var config = require('clientconfig');
+'use strict';
+
+// var _ = require('underscore');
+// var logger = require('andlog');
+// var config = require('clientconfig');
 
 var Router = require('./router');
-var tracking = require('./helpers/metrics');
+// var tracking = require('./helpers/metrics');
 var MainView = require('./views/main-view');
 var MeModel = require('./models/me-model');
 var PersonsCollection = require('./models/persons-collection');

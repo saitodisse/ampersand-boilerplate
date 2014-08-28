@@ -1,4 +1,5 @@
-/* global FB*/
+'use strict';
+
 /*
  * facebook-user.js V. 1.1.0, Created 2012 by Christian Bäuerlein
  */
@@ -18,71 +19,68 @@ module.exports = AmpersandModel.extend({
     props: {
         scope: ['array'],
         autoFetch: ['boolean', false, true],
+        unauthorized: ['boolean'],
+        connected: ['boolean'],
+        disconnected: ['boolean'],
+        loginStatus: ['string'],
         protocol: ['string', false, '']
     },
     derived: {
-        fullName: {
-            deps: ['firstName', 'lastName'],
-            cache: true,
+        isConnected:{
+            // the properties it depends on
+            deps: ['connected'],
+            // how it's calculated
             fn: function () {
-                return this.firstName + ' ' + this.lastName;
-            }
-        },
-        initials: {
-            deps: ['firstName', 'lastName'],
-            cache: true,
-            fn: function () {
-                return (this.firstName.charAt(0) + this.lastName.charAt(0)).toUpperCase();
+                // the distance formula
+                return this.loginStatus === 'connected';
             }
         }
     },
 
-    initialize: function(attributes, options) {
-        options || (options = {});
-        this.options = _.defaults(options, this.defaultOptions);
-
-        FB.Event.subscribe('auth.authResponseChange', this.onLoginStatusChange.bind(this));
+    initialize: function() {
+        // see https://developers.facebook.com/docs/authentication/permissions/
+        window.FB.Event.subscribe('auth.authResponseChange', this.onLoginStatusChange.bind(this));
     },
 
     options: null,
 
-    _loginStatus: null,
-
-    isConnected: function() {
-        return this._loginStatus === 'connected';
-    },
-
     login: function(callback){
         if (typeof callback === 'undefined') {
-        callback = function() {};
+            callback = function() {};
         }
-        FB.login(callback, { scope: this.options.scope.join(',') });
+        this.scope = ['email'];
+        window.FB.login(callback, { scope: this.scope.join(',') });
     },
 
     logout: function(){
-        FB.logout();
+        window.FB.logout();
     },
 
     updateLoginStatus: function(){
-        FB.getLoginStatus(this.onLoginStatusChange);
+        window.FB.getLoginStatus(this.onLoginStatusChange);
     },
 
     onLoginStatusChange: function(response) {
-        if(this._loginStatus === response.status) return false;
-
-        var event;
+        // if(this.loginStatus === response.status){
+        //     return false;
+        // }
+        //
+        // var event_name = '';
 
         if(response.status === 'not_authorized') {
-        event = 'facebook:unauthorized';
-        } else if (response.status === 'connected') {
-        event = 'facebook:connected';
-        if(this.options.autoFetch === true) this.fetch();
-        } else {
-        event = 'facebook:disconnected';
+            this.unauthorized = true;
+        }
+        else if (response.status === 'connected') {
+            this.connected = true;
+            if(this.autoFetch === true){
+                this.fetch();
+            }
+        }
+        else {
+            this.disconnected = true;
         }
 
-        this._loginStatus = response.status;
-        //this.trigger(event, this, response);
+        this.loginStatus = response.status;
     },
 
     parse: function(response) {
@@ -94,7 +92,9 @@ module.exports = AmpersandModel.extend({
     },
 
     sync: function(method, model, options) {
-        if(method !== 'read') throw new Error('FacebookUser is a readonly model, cannot perform ' + method);
+        if(method !== 'read'){
+            throw new Error('FacebookUser is a readonly model, cannot perform ' + method);
+        }
 
         var callback = function(response) {
         if(response.error) {
@@ -105,13 +105,16 @@ module.exports = AmpersandModel.extend({
         return true;
         };
 
-        var request = FB.api('/me', callback);
+        var request = window.FB.api('/me', callback);
         model.trigger('request', model, request, options);
         return request;
     },
 
     profilePictureUrls: function(id) {
-        id || (id = this.id);
+        if(!id){
+            id = this.id;
+        }
+
         var urls = {};
         _([ 'square', 'small', 'normal', 'large' ]).each(function(size){
         urls[size] = this.profilePictureUrl(id, size);
@@ -122,12 +125,12 @@ module.exports = AmpersandModel.extend({
 
     profilePictureUrl: function(id, size) {
         return [
-        this.options.protocol,
+        this.protocol,
         '//graph.facebook.com/',
         id,
         '/picture?type=',
         size,
-        this.options.protocol.indexOf('https') > -1 ? '&return_ssl_resources=1' : ''
+        this.protocol.indexOf('https') > -1 ? '&return_ssl_resources=1' : ''
         ].join('');
     }
 

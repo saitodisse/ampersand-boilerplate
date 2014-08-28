@@ -1,3 +1,5 @@
+'use strict';
+
 var AmpersandModel = require('ampersand-model');
 
 /*

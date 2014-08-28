@@ -1,3 +1,5 @@
+'use strict';
+
 var BasePage = require('./base-page');
 var templates = require('../templates');
 

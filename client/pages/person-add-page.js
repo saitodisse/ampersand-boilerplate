@@ -1,4 +1,5 @@
-/*global app*/
+'use strict';
+
 var BasePage = require('./base-page');
 var templates = require('../templates');
 var PersonForm = require('../forms/person-form');

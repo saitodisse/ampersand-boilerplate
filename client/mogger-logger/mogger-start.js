@@ -1,4 +1,5 @@
 'use strict';
+
 var Mogger = require('mogger');
 var _ = require('lodash');
 
@@ -104,9 +105,11 @@ _.assign(MoggerTracer.prototype, {
             },
             showArguments: true,
 
-            //-------------------------------------------------------
-            // interceptors
-            //-------------------------------------------------------
+            /*
+            -------------------------------------------------------
+            interceptors
+            -------------------------------------------------------
+             */
             interceptors: [
             {
                 filterRegex: /^(trigger|get|has|\$|setFilter|on|_on\w+|render\b|sync|previous|_routeToRegExp|setElement|_getCompareForType|_getDerivedProperty)/i,
@@ -169,9 +172,9 @@ _.assign(MoggerTracer.prototype, {
             pointcut: /^(trigger|on)$/
         });
         this.tracer.traceObj({
-            before: {   message: 'FacebookUserModel', css: 'color: #A47' },
+            before: {   message: 'FaceModel', css: 'color: #A47' },
             target: 'FacebookUserModel.prototype', targetConfig: { css: 'color: #A47' },
-            pointcut: /./
+            pointcut: /^(trigger|on)$/
         });
 
         /*

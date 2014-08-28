@@ -1,3 +1,5 @@
+'use strict';
+
 var Collection = require('ampersand-rest-collection');
 var Person = require('./person-model');
 

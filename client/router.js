@@ -1,4 +1,5 @@
-/*global me, app*/
+'use strict';
+
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home-page');
 var CollectionDemoPage = require('./pages/collection-demo-page');
