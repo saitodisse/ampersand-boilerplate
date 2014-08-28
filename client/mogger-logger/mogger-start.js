@@ -20,6 +20,7 @@ var PersonForm = require('../forms/person-form');
 var MeModel = require('../models/me-model');
 var PersonModel = require('../models/person-model');
 var PersonsCollection = require('../models/persons-collection');
+var FacebookUserModel = require('../models/facebook-user-model');
 
 var BasePage = require('../pages/base-page');
 var HomePage = require('../pages/home-page');
@@ -40,6 +41,7 @@ var surrogateTargetsSource = {
     'MeModel.prototype': MeModel.prototype,
     'PersonModel.prototype': PersonModel.prototype,
     'PersonsCollection.prototype': PersonsCollection.prototype,
+    'FacebookUserModel.prototype': FacebookUserModel.prototype,
     'BasePage.prototype': BasePage.prototype,
     'HomePage.prototype': HomePage.prototype,
     'BootstrapExamplesPage.prototype': BootstrapExamplesPage.prototype,
@@ -165,6 +167,11 @@ _.assign(MoggerTracer.prototype, {
             before: {   message: 'Person', css: 'color: #A47' },
             target: 'PersonModel.prototype', targetConfig: { css: 'color: #A47' },
             pointcut: /^(trigger|on)$/
+        });
+        this.tracer.traceObj({
+            before: {   message: 'FacebookUserModel', css: 'color: #A47' },
+            target: 'FacebookUserModel.prototype', targetConfig: { css: 'color: #A47' },
+            pointcut: /./
         });
 
         /*

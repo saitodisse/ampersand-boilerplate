@@ -82,7 +82,7 @@ module.exports = AmpersandModel.extend({
         }
 
         this._loginStatus = response.status;
-        this.trigger(event, this, response);
+        //this.trigger(event, this, response);
     },
 
     parse: function(response) {

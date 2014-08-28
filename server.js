@@ -13,6 +13,8 @@ var templatizer = require('templatizer');
 var moonbootsConfig = require('./moonbootsConfig');
 var app = express();
 
+var PORT = process.env.PORT || config.http.port;
+
 // a little helper for fixing paths for various environments
 var fixPath = function (pathString) {
     return path.resolve(path.normalize(pathString));
@@ -69,5 +71,5 @@ moonbootsConfig(app);
 
 
 // listen for incoming http requests on the port as specified in our config
-app.listen(process.env.PORT || config.http.port);
-console.log("X_Title_X is running at: http://localhost:" + process.env.PORT || config.http.port + " Yep. That\'s pretty awesome.");
+app.listen(PORT);
+console.log("X_Title_X is running at: http://localhost:" + PORT + " Yep. That\'s pretty awesome.");
