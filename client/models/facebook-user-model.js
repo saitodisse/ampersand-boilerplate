@@ -23,7 +23,7 @@ module.exports = AmpersandModel.extend({
         loginStatus: ['string'],
         protocol: ['string', true, window.document.location.protocol],
         response: ['object'],
-        profile_picture_type: ['string'] //'square', 'small', 'normal', 'large'
+        profile_picture_type: ['string', true, 'normal'] //'square', 'small', 'normal', 'large'
     },
     derived: {
         isConnected:{
@@ -58,6 +58,7 @@ module.exports = AmpersandModel.extend({
             callback = function() {};
         }
 
+        this.scope = ['email'];
         window.FB.login(callback, { scope: this.scope.join(',') });
     },
 
@@ -79,10 +80,6 @@ module.exports = AmpersandModel.extend({
         if(this.connected && this.autoFetch){
             this.fetch();
         }
-
-        // set defaults
-        this.scope = ['email'];
-        this.profile_picture_type = 'normal';
     },
 
     sync: function(method, model, options) {
@@ -105,6 +102,10 @@ module.exports = AmpersandModel.extend({
     },
 
     profilePictureUrl: function() {
+        if(!this.isConnected){
+            return '';
+        }
+
         return [
             this.protocol,
             '//graph.facebook.com/',

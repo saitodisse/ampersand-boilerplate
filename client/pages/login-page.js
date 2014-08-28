@@ -2,6 +2,7 @@
 var BasePage = require('./base-page');
 var templates = require('../templates');
 var FacebookUserModel = require('../models/facebook-user-model');
+var config = require('getconfig');
 /*
 
 file:     login-page.js
@@ -51,8 +52,11 @@ module.exports = BasePage.extend({
     },
 
     local_fbAsyncInit: function() {
+        console.log(config);
+
+
         FB.init({
-            appId: '282574611931207'
+            appId: config.facebook.app_id
         });
 
         this.initializeHtmlElements();
@@ -84,7 +88,7 @@ module.exports = BasePage.extend({
             }
         }, this);
 
-        this.facebook_user.on('change', this.showDetails, this);
+        this.facebook_user.on('change:isConnected', this.showDetails, this);
         this.facebook_user.updateLoginStatus();
     },
 
@@ -98,10 +102,16 @@ module.exports = BasePage.extend({
 
     showDetails: function() {
         console.info('change');
-        var authResponse = app.facebook_user.response.authResponse;
-        var authResponse_stringified = JSON.stringify(authResponse, '  ', 2);
-        this.jPreDetails.html(authResponse_stringified);
-        this.jPicture.attr('src', this.facebook_user.pictureUrl);
+        if(this.facebook_user.isConnected){
+            var authResponse = app.facebook_user.response.authResponse;
+            var authResponse_stringified = JSON.stringify(authResponse, '  ', 2);
+            this.jPreDetails.html(authResponse_stringified);
+            this.jPicture.attr('src', this.facebook_user.pictureUrl).show();
+        }
+        else{
+            this.jPreDetails.html('');
+            this.jPicture.attr('src', '').hide();
+        }
     }
 
 });

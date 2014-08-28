@@ -1,3 +1,5 @@
+'use strict';
+
 /* global console */
 var path            = require('path');
 var express         = require('express');
@@ -6,14 +8,11 @@ var bodyParser      = require('body-parser');
 var cookieParser    = require('cookie-parser');
 var compress        = require('compression');
 var config          = require('getconfig');
-var semiStatic      = require('semi-static');
 var serveStatic     = require('serve-static');
-var stylizer        = require('stylizer');
-var templatizer     = require('templatizer');
 var morgan          = require('morgan');
 var moonbootsConfig = require('./moonbootsConfig');
 
-var app = express();
+var server_app = express();
 var PORT = process.env.PORT || config.http.port;
 
 // a little helper for fixing paths for various environments
@@ -24,37 +23,37 @@ var fixPath = function (pathString) {
 // -----------------
 // Configure express
 // -----------------
-app.use(compress());
-app.use(serveStatic(fixPath('public')));
+server_app.use(compress());
+server_app.use(serveStatic(fixPath('public')));
 
-app.use(morgan('dev'));
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+server_app.use(morgan('dev'));
+server_app.use(cookieParser());
+server_app.use(bodyParser.urlencoded({ extended: false }));
+server_app.use(bodyParser.json());
 
 // in order to test this with spacemonkey we need frames
 if (!config.isDev) {
-    app.use(helmet.xframe());
+    server_app.use(helmet.xframe());
 }
-app.use(helmet.xssFilter());
-app.use(helmet.nosniff());
+server_app.use(helmet.xssFilter());
+server_app.use(helmet.nosniff());
 
-app.set('view engine', 'jade');
+server_app.set('view engine', 'jade');
 
 // -----------------
 // Set up our little demo API
 // -----------------
 var api = require('./fakeApi');
-app.get('/api/people', api.list);
-app.get('/api/people/:id', api.get);
-app.delete('/api/people/:id', api.delete);
-app.put('/api/people/:id', api.update);
-app.post('/api/people', api.add);
+server_app.get('/api/people', api.list);
+server_app.get('/api/people/:id', api.get);
+server_app.delete('/api/people/:id', api.delete);
+server_app.put('/api/people/:id', api.update);
+server_app.post('/api/people', api.add);
 
 // -----------------
 // Set our client config cookie
 // -----------------
-app.use(function (req, res, next) {
+server_app.use(function (req, res, next) {
     res.cookie('config', JSON.stringify(config.client));
     next();
 });
@@ -65,13 +64,13 @@ app.use(function (req, res, next) {
 // ---------------------------------------------------
 
 //Bootstrap fonts
-app.all(/^\/fonts$/, function(req, res) { res.redirect('/fonts/'); });
-app.use('/fonts/',serveStatic(__dirname + '/node_modules/bootstrap/dist/fonts'));
+server_app.all(/^\/fonts$/, function(req, res) { res.redirect('/fonts/'); });
+server_app.use('/fonts/',serveStatic(__dirname + '/node_modules/bootstrap/dist/fonts'));
 
-moonbootsConfig(app);
+moonbootsConfig(server_app);
 
 
 
 // listen for incoming http requests on the port as specified in our config
-app.listen(PORT);
+server_app.listen(PORT);
 console.log("X_Title_X is running at: http://localhost:" + PORT + " Yep. That\'s pretty awesome.");

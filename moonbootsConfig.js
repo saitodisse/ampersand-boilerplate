@@ -1,13 +1,10 @@
+'use strict';
+
 var config = require('getconfig');
 var stylizer = require('stylizer');
 var templatizer = require('templatizer');
 var path = require('path');
 var Moonboots = require('moonboots-express');
-
-// for reuse
-var appDir = __dirname + '/client';
-var cssDir = __dirname + '/public/css';
-
 
 // a little helper for fixing paths for various environments
 var fixPath = function (pathString) {
@@ -28,7 +25,7 @@ module.exports = function(app) {
             // Specify the stylesheets we want to bundle
             stylesheets: [
                 __dirname + '/node_modules/bootstrap/dist/css/bootstrap.css',
-                cssDir + '/app.css'
+                __dirname + '/public/css' + '/app.css'
             ],
             browserify: {
                 debug: false
