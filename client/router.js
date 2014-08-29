@@ -3,18 +3,20 @@
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home-page');
 var CollectionDemoPage = require('./pages/collection-demo-page');
-var LoginPage = require('./pages/login-page');
 var PersonAddPage = require('./pages/person-add-page');
 var PersonEditPage = require('./pages/person-edit-page');
 var PersonViewPage = require('./pages/person-view-page');
 var BootstrapExamplesPage = require('./pages/bootstrap-examples-page');
 
+var FacebookLoginPage = require('./pages/facebook-login-page');
+var GoogleLoginPage = require('./pages/google-login-page');
 
 module.exports = Router.extend({
     routes: {
         ''                  : 'load_home',
         'collections'       : 'load_collectionDemo',
-        'login'             : 'load_login',
+        'facebook-login'    : 'load_facebookLogin',
+        'google-login'      : 'load_googleLogin',
         'person/add'        : 'load_personAdd',
         'person/:id'        : 'load_personView',
         'person/:id/edit'   : 'load_personEdit',
@@ -36,8 +38,14 @@ module.exports = Router.extend({
         }));
     },
 
-    load_login: function () {
-        this.trigger('page', new LoginPage({
+    load_facebookLogin: function () {
+        this.trigger('page', new FacebookLoginPage({
+            model: me
+        }));
+    },
+
+    load_googleLogin: function () {
+        this.trigger('page', new GoogleLoginPage({
             model: me
         }));
     },

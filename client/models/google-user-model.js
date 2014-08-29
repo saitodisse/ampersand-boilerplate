@@ -1,0 +1,123 @@
+'use strict';
+
+/*
+ * based on: google-user.js V. 1.1.0, Created 2012 by Christian Bäuerlein
+ */
+var AmpersandModel = require('ampersand-model');
+/*
+
+file:     google-user-model.js
+class:    GoogleUserModel
+instance: googleUserModel
+
+*/
+
+module.exports = AmpersandModel.extend({
+    type: 'user',
+    props: {
+        scope: ['array'],
+        autoFetch: ['boolean', true, true],
+        unauthorized: ['boolean'],
+        connected: ['boolean'],
+        disconnected: ['boolean'],
+        loginStatus: ['string'],
+        protocol: ['string', true, window.document.location.protocol],
+        response: ['object'],
+        details: ['object'],
+        profile_picture_type: ['string', true, 'normal'] //'square', 'small', 'normal', 'large'
+    },
+    derived: {
+        isConnected:{
+            // the properties it depends on
+            deps: ['connected'],
+            // how it's calculated
+            fn: function () {
+                // the distance formula
+                return this.loginStatus === 'connected';
+            }
+        },
+        pictureUrl:{
+            // the properties it depends on
+            deps: ['connected', 'profile_picture_type'],
+            // how it's calculated
+            fn: function () {
+                // the distance formula
+                return this.profilePictureUrl();
+            }
+        }
+    },
+
+    initialize: function() {
+        // see https://developers.google.com/docs/authentication/permissions/
+        window.FB.Event.subscribe('auth.authResponseChange', this.onLoginStatusChange.bind(this));
+    },
+
+    options: null,
+
+    login: function(callback){
+        if (typeof callback === 'undefined') {
+            callback = function() {};
+        }
+
+        this.scope = ['email'];
+        window.FB.login(callback, { scope: this.scope.join(',') });
+    },
+
+    logout: function(){
+        window.FB.logout();
+    },
+
+    updateLoginStatus: function(){
+        window.FB.getLoginStatus(this.onLoginStatusChange);
+    },
+
+    onLoginStatusChange: function(response) {
+        this.response = response;
+        this.loginStatus = response.status;
+        this.unauthorized = (this.loginStatus === 'not_authorized');
+        this.connected = (this.loginStatus === 'connected');
+        this.disconnected = (this.loginStatus === 'unknown');
+
+        if(this.connected && this.autoFetch){
+            this.fetch();
+        }
+
+        if(!this.isConnected){
+            this.details = {};
+        }
+    },
+
+    sync: function(method) {
+        if(method !== 'read'){
+            throw new Error('FacebookUser is a readonly model, cannot perform ' + method);
+        }
+
+        var callback = function(response) {
+            if(response.error) {
+                throw response;
+            } else {
+                this.details = response;
+            }
+            return true;
+        };
+
+        window.FB.api('/me', callback.bind(this));
+    },
+
+    profilePictureUrl: function() {
+        if(!this.isConnected){
+            return '';
+        }
+
+        return [
+            this.protocol,
+            '//graph.google.com/',
+            app.google_user.response.authResponse.userID,
+            '/picture?type=',
+            this.profile_picture_type,
+            this.protocol.indexOf('https') > -1 ? '&return_ssl_resources=1' : ''
+        ].join('');
+    }
+
+
+});

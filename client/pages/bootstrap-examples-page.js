@@ -1,8 +1,8 @@
 'use strict';
 
-var View = require('ampersand-view');
+var BasePage = require('./base-page');
 var templates = require('../templates');
 
-module.exports = View.extend({
+module.exports = BasePage.extend({
     template: templates.pages.bootstrapExamples
 });

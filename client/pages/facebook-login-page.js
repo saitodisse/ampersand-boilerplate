@@ -5,29 +5,20 @@ var FacebookUserModel = require('../models/facebook-user-model');
 var config = require('clientconfig');
 /*
 
-file:     login-page.js
-class:    LoginPage
-instance: loginPage
+file:     facebook-login-page.js
+class:    FacebookLoginPage
+instance: facebookLoginPage
 
 */
 
 module.exports = BasePage.extend({
     pageTitle: 'Facebook Login Page',
-    template: templates.pages.login,
+    template: templates.pages.facebookLogin,
 
     events: {
         'click [role=login]': 'login',
         'click [role=logout]': 'logout'
     },
-
-    // bindings: {
-    //     'model.avatar': {
-    //         type: 'attribute',
-    //         role: 'avatar',
-    //         name: 'src'
-    //     },
-
-    // },
 
     login: function() {
         this.facebook_user.login();

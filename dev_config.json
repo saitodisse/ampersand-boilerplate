@@ -21,6 +21,11 @@
             // login-localhost -> https://developers.facebook.com/apps/283179825204019/settings/
             "app_id": "283179825204019",
             // login-test -> https://developers.facebook.com/apps/282574611931207/settings/
+        },
+        "google": {
+            // https://console.developers.google.com/project/apps~eighth-upgrade-687/apiui/credential
+            "client_id": "413688420629-vi56d1blmu5ecv57vpoh29sd2gu4pjlb.apps.googleusercontent.com",
+            "api_key": "AIzaSyD6LjXhUUv1EfmwtjaTA9a5pSD9wfETZCQ",
         }
     }
 }

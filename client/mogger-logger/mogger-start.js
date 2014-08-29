@@ -31,6 +31,9 @@ var PersonAddPage = require('../pages/person-add-page');
 var PersonEditPage = require('../pages/person-edit-page');
 var PersonViewPage = require('../pages/person-view-page');
 
+var FacebookLoginPage = require('../pages/facebook-login-page');
+var GoogleLoginPage = require('../pages/google-login-page');
+
 var MainView = require('../views/main-view');
 var PersonView = require('../views/person-view');
 
@@ -50,6 +53,10 @@ var surrogateTargetsSource = {
     'PersonAddPage.prototype': PersonAddPage.prototype,
     'PersonEditPage.prototype': PersonEditPage.prototype,
     'PersonViewPage.prototype': PersonViewPage.prototype,
+
+    'FacebookLoginPage.prototype': FacebookLoginPage.prototype,
+    'GoogleLoginPage.prototype': GoogleLoginPage.prototype,
+
     'MainView.prototype': MainView.prototype,
     'PersonView.prototype': PersonView.prototype,
 };
@@ -177,18 +184,20 @@ _.assign(MoggerTracer.prototype, {
             pointcut: /^(trigger|on)$/
         });
 
+        var REGEX_FOR_VIEWS = /^(renderWithTemplate|initialize)$/;
+
         /*
         VIEWS
         */
         this.tracer.traceObj({
             before: {   message: 'MainView', css: 'color: #A42' },
             target: 'MainView.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
         this.tracer.traceObj({
             before: {   message: 'PersonView', css: 'color: #A42' },
             target: 'PersonView.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
 
         /*
@@ -197,37 +206,49 @@ _.assign(MoggerTracer.prototype, {
         this.tracer.traceObj({
             before: {   message: 'BasePage', css: 'color: #A42' },
             target: 'BasePage.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
         this.tracer.traceObj({
             before: {   message: 'HomePage', css: 'color: #A42' },
             target: 'HomePage.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
         this.tracer.traceObj({
             before: {   message: 'BootstrapExamplesPage', css: 'color: #A42' },
             target: 'BootstrapExamplesPage.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
         this.tracer.traceObj({
             before: {   message: 'CollectionDemoPage', css: 'color: #A42' },
             target: 'CollectionDemoPage.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
         this.tracer.traceObj({
             before: {   message: 'PersonAddPage', css: 'color: #A42' },
             target: 'PersonAddPage.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
         this.tracer.traceObj({
             before: {   message: 'PersonEditPage', css: 'color: #A42' },
             target: 'PersonEditPage.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
         this.tracer.traceObj({
             before: {   message: 'PersonViewPage', css: 'color: #A42' },
             target: 'PersonViewPage.prototype', targetConfig: {   css: 'color: #A42' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
+        });
+
+        this.tracer.traceObj({
+            before: {   message: 'FacebookLoginPage', css: 'color: #A42' },
+            target: 'FacebookLoginPage.prototype', targetConfig: {   css: 'color: #A42' },
+            pointcut: REGEX_FOR_VIEWS
+        });
+
+        this.tracer.traceObj({
+            before: {   message: 'GoogleLoginPage', css: 'color: #A42' },
+            target: 'GoogleLoginPage.prototype', targetConfig: {   css: 'color: #A42' },
+            pointcut: REGEX_FOR_VIEWS
         });
 
         /*
@@ -236,7 +257,7 @@ _.assign(MoggerTracer.prototype, {
         this.tracer.traceObj({
             before: {   message: 'PersonForm', css: 'color: #A40' },
             target: 'PersonForm.prototype', targetConfig: {   css: 'color: #A40' },
-            pointcut: /renderWithTemplate/
+            pointcut: REGEX_FOR_VIEWS
         });
 
         //2A2, 075, 249,
